@@ -1,0 +1,44 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  pythonVersion: '3.10'
+
+steps:
+
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '$(pythonVersion)'
+    addToPath: true
+
+- script: |
+    python -m pip install --upgrade pip
+    pip install -r requirements.txt
+  displayName: 'Install dependencies'
+
+- script: |
+    pytest --alluredir=allure-results
+  displayName: 'Run Pytest with Allure results'
+
+- script: |
+    sudo apt-get update
+    sudo apt-get install -y default-jre
+    wget https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
+    tar -zxvf allure-2.27.0.tgz
+    sudo mv allure-2.27.0 /opt/allure
+    sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+  displayName: 'Install Allure CLI'
+
+- script: |
+    allure generate allure-results -o allure-report --clean
+  displayName: 'Generate Allure HTML report'
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: 'allure-report'
+    artifact: 'AllureReport'
+    publishLocation: 'pipeline'
+  displayName: 'Publish Allure Report as artifact'
