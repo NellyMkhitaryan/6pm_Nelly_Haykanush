@@ -3,6 +3,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import logging
 
+
 class HomePage:
     SEARCH_INPUT = (By.ID, "searchAll")
     SEARCH_BUTTON = (By.CSS_SELECTOR, "#searchForm button")

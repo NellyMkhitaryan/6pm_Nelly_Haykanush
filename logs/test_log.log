@@ -1,0 +1,10 @@
+2025-06-12 03:37:36,536 - INFO - Starting product search test
+2025-06-12 03:38:11,965 - INFO - Opened URL: https://www.6pm.com/
+2025-06-12 03:38:11,966 - INFO - Searching for product: classic sunglasses
+2025-06-12 03:38:16,517 - INFO - Applying filter 'RAEN Optics'
+2025-06-12 03:38:19,059 - INFO - Applying filter 'Orange'
+2025-06-12 03:38:21,365 - INFO - Applying filter '$200.00 and Under'
+2025-06-12 03:38:23,680 - INFO - Result count text: '1 items found'
+2025-06-12 03:38:23,711 - INFO - Result count text: '1 items found'
+2025-06-12 03:38:23,745 - INFO - Product text: raen optics - darine. color nectar. low stock. on sale for $129.46. msrp $174.95. 26% off.
+2025-06-12 03:38:23,758 - INFO - Product search test completed successfully

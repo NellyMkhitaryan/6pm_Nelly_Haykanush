@@ -5,6 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
+import allure
 
 @pytest.fixture(scope="session", autouse=True)
 def configure_logging():
@@ -38,10 +39,26 @@ def configure_logging():
     for noisy_logger in ["WDM", "selenium", "urllib3"]:
         logging.getLogger(noisy_logger).setLevel(logging.WARNING)
 
+
 @pytest.fixture(scope="function")
 def test_driver():
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+    driver = webdriver.Chrome(options=options)
     options = Options()
     options.add_argument("--start-maximized")
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
     yield driver
     driver.quit()
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item):
+    outcome = yield
+    result = outcome.get_result()
+    if result.when == "call":
+        if result.outcome == 'failed':
+            allure.attach(
+                item.funcargs.get("test_driver").get_screenshot_as_png(),
+                name=f"{item.name}_screen",
+                attachment_type=allure.attachment_type.PNG)

@@ -5,6 +5,7 @@ import config
 import test_data
 import re
 
+
 def test_product_search(test_driver):
     logger = logging.getLogger("test_product_search")
     logger.info("Starting product search test")
