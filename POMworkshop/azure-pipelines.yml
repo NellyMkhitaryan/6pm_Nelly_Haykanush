@@ -8,43 +8,28 @@ variables:
   pythonVersion: '3.10'
 
 steps:
+# Use Python 3.10
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '$(pythonVersion)'
     addToPath: true
 
-# Install Google Chrome on agent
-- script: |
-    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-    sudo apt install -y ./google-chrome-stable_current_amd64.deb
-  displayName: 'Install Google Chrome'
-
-# Install Python dependencies
+# Install dependencies from your requirements.txt
 - script: |
     python -m pip install --upgrade pip
     pip install -r requirements.txt
-  displayName: 'Install Python dependencies'
+  displayName: 'Install dependencies'
 
-# Run tests and collect Allure results
+# Run pytest and collect Allure results
 - script: |
     pytest --alluredir=allure-results
-  displayName: 'Run tests with Allure result output'
+  displayName: 'Run tests and collect Allure results'
 
-# Install Allure CLI and generate report
+# Install Allure CLI manually
 - script: |
     sudo apt-get update
     sudo apt-get install -y default-jre
     wget https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
     tar -zxvf allure-2.27.0.tgz
     sudo mv allure-2.27.0 /opt/allure
-    sudo ln -s /opt/allure/bin/allure /usr/bin/allure
-    allure generate allure-results -o allure-report --clean
-  displayName: 'Generate Allure Report'
-
-# Publish report as downloadable artifact
-- task: PublishPipelineArtifact@1
-  inputs:
-    targetPath: 'allure-report'
-    artifact: 'AllureReport'
-    publishLocation: 'pipeline'
-  displayName: 'Publish Allure Report'
+    sudo ln -s
