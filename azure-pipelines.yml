@@ -1,35 +1,36 @@
 trigger:
-- main
+- main  # or your default branch
 
 pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  pythonVersion: '3.10'
+  PYTHON_VERSION: '3.13'  # Adjust if needed
 
 steps:
-# Use Python 3.10
 - task: UsePythonVersion@0
   inputs:
-    versionSpec: '$(pythonVersion)'
+    versionSpec: '$(PYTHON_VERSION)'
     addToPath: true
 
-# Install dependencies from your requirements.txt
 - script: |
     python -m pip install --upgrade pip
     pip install -r requirements.txt
   displayName: 'Install dependencies'
 
-# Run pytest and collect Allure results
 - script: |
     pytest --alluredir=allure-results
-  displayName: 'Run tests and collect Allure results'
+  displayName: 'Run tests with Allure'
 
-# Install Allure CLI manually
-- script: |
-    sudo apt-get update
-    sudo apt-get install -y default-jre
-    wget https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
-    tar -zxvf allure-2.27.0.tgz
-    sudo mv allure-2.27.0 /opt/allure
-    sudo ln -s
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'   # pytest can produce junit xml with --junitxml option if you want to add it
+    testResultsFiles: '**/TEST-*.xml'
+    failTaskOnFailedTests: true
+  condition: succeededOrFailed()
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'allure-results'
+    ArtifactName: 'allure-results'
+    publishLocation: 'Container'
